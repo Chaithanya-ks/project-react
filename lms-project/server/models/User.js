@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema(
             type:String,
             required:true,
         },
-        enrolledcourses : [
+        enrolledCourses : [
             {
                 type:mongoose.Schema.Types.ObjectId,
                 ref:'Course',
