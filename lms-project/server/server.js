@@ -12,33 +12,27 @@ import educatorRouter from './routes/educatorRoutes.js';
 import courseRouter from './routes/courseRoutes.js';
 import userRouter from './routes/userRoutes.js';
 
-// Vercel / Serverless needs this for Stripe raw body
-export const config = {
-  api: { bodyParser: false }
-};
-
-// Initialize express
 const app = express();
 
-// 1️⃣ STRIPE WEBHOOK MUST BE FIRST (raw body, no JSON)
+// 1️⃣ STRIPE WEBHOOK FIRST — RAW BODY
 app.post(
   '/stripe',
   express.raw({ type: 'application/json' }),
   stripeWebhooks
 );
 
-// 2️⃣ Connect database & cloudinary
+// 2️⃣ Connect DB + cloudinary
 await connectDB();
 await connectCloudinary();
 
-// 3️⃣ STANDARD MIDDLEWARE (after raw route)
+// 3️⃣ Normal middleware
 app.use(cors());
 app.use(express.json());
 app.use(clerkMiddleware());
 
-// 4️⃣ ROUTES
+// 4️⃣ Routes
 app.get('/', (req, res) => {
-  res.send("API working...");
+  res.send('API working...');
 });
 
 app.post('/clerk', clerkWebhooks);
@@ -47,9 +41,6 @@ app.use('/api/educator', educatorRouter);
 app.use('/api/course', courseRouter);
 app.use('/api/user', userRouter);
 
-// 5️⃣ START SERVER
+// 5️⃣ Start server
 const PORT = process.env.PORT || 5000;
-
-app.listen(PORT, () => {
-  console.log(`Server is running at port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server running on ${PORT}`));
